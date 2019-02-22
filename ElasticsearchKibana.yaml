@@ -47,3 +47,15 @@ spec:
       - name: elasticsearch-persistent-storage
         persistentVolumeClaim:
           claimName: elasticsearch-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+spec:
+  ports:
+  - port: 9200
+    targetPort: 9200
+  selector:
+    app: elasticsearch-kibana
+  type: ClusterIP
