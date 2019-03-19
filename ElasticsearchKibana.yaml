@@ -59,3 +59,15 @@ spec:
   selector:
     app: elasticsearch-kibana
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+spec:
+  ports:
+  - port: 5601
+    targetPort: 5601
+  selector:
+    app: elasticsearch-kibana
+  type: LoadBalancer
