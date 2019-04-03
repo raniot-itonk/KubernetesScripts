@@ -1,34 +1,25 @@
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: task-pv-volume1
-  labels:
-    type: local
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/var/opt/mssql"
----
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: task-pv-claim1
+  name: mssql
 spec:
-  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 3Gi
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mssql
+data:
+  SA_PASSWORD: TXlDMG05bCZ4UEBzc3cwcmQ=
+---
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: mssql-deployment
+  name: mssql
 spec:
   replicas: 1
   template:
@@ -39,7 +30,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: mssql
-        image: mcr.microsoft.com/mssql/server:2017-latest
+        image: mcr.microsoft.com/mssql/server:2017-CU12-ubuntu
         ports:
         - containerPort: 1433
         env:
@@ -53,12 +44,12 @@ spec:
               name: mssql
               key: SA_PASSWORD 
         volumeMounts:
-        - mountPath: "/var/opt/mssql"
-          name: task-pv-storage
+        - mountPath: /var/opt/mssql
+          name: mssql
       volumes:
-      - name: task-pv-storage
+      - name: mssql
         persistentVolumeClaim:
-            claimName: task-pv-claim1
+            claimName: mssql
 ---
 apiVersion: v1
 kind: Service
