@@ -1,22 +1,20 @@
-# apiVersion: v1
-# kind: PersistentVolumeClaim
-# metadata:
-#   name: prometheus-claim
-#   labels:
-#     app: prometheus
-# spec:
-#   accessModes:
-#     - ReadWriteOnce
-#   resources:
-#     requests:
-#       storage: 2Gi
-# ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-new-claim
+  labels:
+    app: prometheus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
-  labels:
-    app: prometheus
 spec:
   replicas: 1
   selector:
@@ -34,23 +32,23 @@ spec:
         - name: config-volume
           mountPath: /etc/prometheus/prometheus.yml
           subPath: prometheus.yml
-        # - name: prometheus-persistent-storage
-        #   mountPath: /prometheus
+        - name: prometheus-persistent-storage
+          mountPath: /prometheus
         ports:
         - containerPort: 9090
       volumes:
       - name: config-volume
         configMap:
           name: prometheus-config
-      # - name: prometheus-persistent-storage
-      #   persistentVolumeClaim:
-      #     claimName: prometheus-claim 
-      # serviceAccountName: prometheus
+      - name: prometheus-persistent-storage
+        persistentVolumeClaim:
+          claimName: prometheus-new-claim 
+      serviceAccountName: prometheus
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: prometheus-service
+  name: prometheus
 spec:
   selector:
     app: prometheus
