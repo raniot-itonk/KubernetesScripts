@@ -13,10 +13,20 @@ spec:
         backend:
           serviceName: client
           servicePort: 80
-  - host: stockexchange.prometheus.com
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: stockexchange2
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "30"
+spec:
+  rules:
+  - host: stockexchange.com
     http:
       paths:
-      - path: /
-        backend:
-          serviceName: prometheus
-          servicePort: 9090
+      - backend:
+          serviceName: clientv2
+          servicePort: 80
