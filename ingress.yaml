@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: stockexchange
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: stockexchange.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: client
+          servicePort: 80
+  - host: stockexchange.prometheus.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus
+          servicePort: 9090
