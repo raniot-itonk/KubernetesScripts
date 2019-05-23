@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: elasticsearch-claim
+  name: elasticsearch-new-claim
   labels:
     app: elasticsearch-kibana
 spec:
@@ -9,7 +9,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 20Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -18,7 +18,7 @@ metadata:
   labels:
     app: elasticsearch-kibana
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: elasticsearch-kibana
@@ -37,16 +37,26 @@ spec:
       containers:
       - name: elasticsearch-kibana
         image: sebp/elk
+        resources:
+          limits:
+            memory: 3Gi
+            cpu: "2"
+          requests:
+            memory: 512Mi
+            cpu: "250m"
         ports:
         - containerPort: 5601
         - containerPort: 9200
+        env:
+        - name: MSSQL_PID
+          value: "Developer"
         volumeMounts:
         - name: elasticsearch-persistent-storage
           mountPath: /var/lib/elasticsearch
       volumes:
       - name: elasticsearch-persistent-storage
         persistentVolumeClaim:
-          claimName: elasticsearch-claim
+          claimName: elasticsearch-new-claim
 ---
 apiVersion: v1
 kind: Service

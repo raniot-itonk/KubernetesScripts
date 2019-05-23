@@ -34,8 +34,8 @@ spec:
         ports:
         - containerPort: 1433
         env:
-        - name: MSSQL_PID
-          value: "Developer"
+        - name: LOGSTASH_START
+          value: "0"
         - name: ACCEPT_EULA
           value: "Y"
         - name: MSSQL_SA_PASSWORD
